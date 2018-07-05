@@ -2,10 +2,7 @@ package com.xinho.activemq;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Session;
+import javax.jms.*;
 
 
 /**
@@ -30,9 +27,33 @@ public class JmsQueueProducer {
             Session session=connection
                     .createSession(Boolean.FALSE,Session.AUTO_ACKNOWLEDGE);
 
+            //4.创建目的地destination
+            Destination destination=session.createQueue("myQueue");
+            //5.创建发送者
+            MessageProducer messageProducer=session.createProducer(destination);
+
+            //设置消息是否持久化DeliveryMode.PERSISTENT NON_PERSISTENT
+            messageProducer.setDeliveryMode(DeliveryMode.PERSISTENT);
+
+            for (int i=0;i<10;i++){
+                TextMessage message=session.createTextMessage("hello"+i);
+
+                messageProducer.send(message);
+            }
+            session.commit();
+
+            session.close();
 
         } catch (JMSException e) {
             e.printStackTrace();
+        }finally {
+            if(connection!=null){
+                try {
+                    connection.close();
+                } catch (JMSException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
