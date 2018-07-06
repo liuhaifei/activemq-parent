@@ -34,7 +34,7 @@ public class JMSPersistentTopicConsumer {
             TextMessage textMessage=(TextMessage) consumer.receive();
             System.out.println(textMessage.getText());
 
-//            session.commit(); //消息被确认
+            session.commit(); //消息被确认
 
             session.close();
         } catch (JMSException e) {

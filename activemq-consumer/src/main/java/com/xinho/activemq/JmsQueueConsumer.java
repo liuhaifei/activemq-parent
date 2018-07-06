@@ -25,7 +25,7 @@ public class JmsQueueConsumer {
             connection.start();
             //3.创建会话session
             Session session=connection
-                    .createSession(Boolean.FALSE,Session.DUPS_OK_ACKNOWLEDGE);//延迟确认
+                    .createSession(Boolean.FALSE,Session.AUTO_ACKNOWLEDGE);//延迟确认
 
             //4.创建目的地destination
             Destination destination=session.createQueue("myQueue");
@@ -37,9 +37,9 @@ public class JmsQueueConsumer {
             for (int i=0;i<10;i++){
                 TextMessage message=(TextMessage)consumer.receive();
                 System.out.println(message.getText());
-                if (i==8){
-                    message.acknowledge();//延迟确认机制-->确认当前之前的  之后的不会被提交
-                }
+//                if (i==8){
+//                    message.acknowledge();//延迟确认机制-->确认当前之前的  之后的不会被提交
+//                }
 
             }
 //            session.commit();

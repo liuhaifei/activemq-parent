@@ -25,7 +25,7 @@ public class JmsQueueProducer {
             connection.start();
             //3.创建会话session
             Session session=connection
-                    .createSession(Boolean.TRUE,Session.AUTO_ACKNOWLEDGE);
+                    .createSession(Boolean.FALSE,Session.AUTO_ACKNOWLEDGE);
 
             //4.创建目的地destination
             Destination destination=session.createQueue("myQueue");
