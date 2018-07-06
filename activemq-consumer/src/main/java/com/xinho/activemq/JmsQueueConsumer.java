@@ -12,7 +12,7 @@ import javax.jms.*;
  * @Description: 生产者
  * @date 2018/7/516:16
  */
-public class JmsQueueProducer {
+public class JmsQueueConsumer {
 
     public static void main(String[] args) {
         //1.创建连接工程
@@ -25,20 +25,22 @@ public class JmsQueueProducer {
             connection.start();
             //3.创建会话session
             Session session=connection
-                    .createSession(Boolean.TRUE,Session.AUTO_ACKNOWLEDGE);
+                    .createSession(Boolean.FALSE,Session.DUPS_OK_ACKNOWLEDGE);//延迟确认
 
             //4.创建目的地destination
             Destination destination=session.createQueue("myQueue");
             //5.创建发送者
-            MessageProducer messageProducer=session.createProducer(destination);
+            MessageConsumer consumer=session.createConsumer(destination);
 
-            //设置消息是否持久化DeliveryMode.PERSISTENT NON_PERSISTENT
-            messageProducer.setDeliveryMode(DeliveryMode.PERSISTENT);
+
 
             for (int i=0;i<10;i++){
-                TextMessage message=session.createTextMessage("hello"+i);
+                TextMessage message=(TextMessage)consumer.receive();
+                System.out.println(message.getText());
+                if (i==8){
+                    message.acknowledge();//延迟确认机制-->确认当前之前的  之后的不会被提交
+                }
 
-                messageProducer.send(message);
             }
 //            session.commit();
 

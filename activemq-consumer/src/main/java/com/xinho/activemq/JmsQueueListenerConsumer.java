@@ -3,6 +3,7 @@ package com.xinho.activemq;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
+import java.io.IOException;
 
 
 /**
@@ -12,9 +13,9 @@ import javax.jms.*;
  * @Description: 生产者
  * @date 2018/7/516:16
  */
-public class JmsQueueProducer {
+public class JmsQueueListenerConsumer {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         //1.创建连接工程
         ConnectionFactory connectionFactory=
                     new ActiveMQConnectionFactory("tcp://47.96.119.178:61616");
@@ -25,25 +26,34 @@ public class JmsQueueProducer {
             connection.start();
             //3.创建会话session
             Session session=connection
-                    .createSession(Boolean.TRUE,Session.AUTO_ACKNOWLEDGE);
+                    .createSession(Boolean.FALSE,Session.DUPS_OK_ACKNOWLEDGE);//延迟确认
 
             //4.创建目的地destination
             Destination destination=session.createQueue("myQueue");
             //5.创建发送者
-            MessageProducer messageProducer=session.createProducer(destination);
+            MessageConsumer consumer=session.createConsumer(destination);
 
-            //设置消息是否持久化DeliveryMode.PERSISTENT NON_PERSISTENT
-            messageProducer.setDeliveryMode(DeliveryMode.PERSISTENT);
 
-            for (int i=0;i<10;i++){
-                TextMessage message=session.createTextMessage("hello"+i);
+            MessageListener messageListener=new MessageListener() {
+                @Override
+                public void onMessage(Message message) {
+                    try {
+                        System.out.println(((TextMessage)message).getText());
+                    } catch (JMSException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
 
-                messageProducer.send(message);
-            }
-//            session.commit();
+           consumer.setMessageListener(messageListener);
 
-            session.close();
 
+            session.commit();
+
+//            session.close();
+
+
+            System.in.read();
         } catch (JMSException e) {
             e.printStackTrace();
         }finally {
