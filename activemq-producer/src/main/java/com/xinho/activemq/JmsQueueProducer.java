@@ -35,6 +35,7 @@ public class JmsQueueProducer {
             //设置消息是否持久化DeliveryMode.PERSISTENT NON_PERSISTENT
             messageProducer.setDeliveryMode(DeliveryMode.PERSISTENT);
 
+
             for (int i=0;i<10;i++){
                 TextMessage message=session.createTextMessage("hello"+i);
 

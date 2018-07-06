@@ -35,7 +35,7 @@ public class JMSPersistentTopicConsumer {
             System.out.println(textMessage.getText());
 
             session.commit(); //消息被确认
-
+//                session.rollback();
             session.close();
         } catch (JMSException e) {
             e.printStackTrace();

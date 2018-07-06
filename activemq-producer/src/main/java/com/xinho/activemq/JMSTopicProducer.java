@@ -27,7 +27,7 @@ public class JMSTopicProducer {
              Destination destination=session.createTopic("myTopic");
 
              MessageProducer producer=session.createProducer(destination);
-             producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+//             producer.setDeliveryMode(DeliveryMode.PERSISTENT);
 
              //创建需要发送的消息
             TextMessage textMessage=session.createTextMessage("this是一个test");
